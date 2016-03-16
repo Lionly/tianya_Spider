@@ -93,11 +93,11 @@ if __name__ == '__main__':
 	user_info = soup.find('div', class_='atl-info').find('span').find('a')
 	# 获取总页数 
 	# ADD 处理小于一页的情况
-	div_pages = soup.find('div', class_='atl-pages')
+	div_pages = soup.find('div', class_='atl-pages').find('form')
 	if div_pages is None:
 		maxpage = 1
 	else:
-		maxpage = div_pages.find('form').find('a', class_='js-keyboard-next').find_previous_sibling('a').text
+		maxpage = div_pages.find('a', class_='js-keyboard-next').find_previous_sibling('a').text
 	base_info = [soup.title.text.split('_')[0], user_info['uname'], user_info['uid']]
 	print u'输入的链接解析完毕\n===================\n输入 URL：', url
 	print u'帖子标题:', base_info[0]
