@@ -91,16 +91,21 @@ if __name__ == '__main__':
 	# 获取帖子的基本信息
 	soup = BeautifulSoup(requests.get(seturl(url_info, 1)).content, "html.parser", from_encoding="utf-8" )
 	user_info = soup.find('div', class_='atl-info').find('span').find('a')
-	# 获取总页数 没处理小于一页的，可能出错
-	maxpage = soup.find('div', class_='atl-pages').find('form').find('a', class_='js-keyboard-next').find_previous_sibling('a')
+	# 获取总页数 
+	# ADD 处理小于一页的情况
+	div_pages = soup.find('div', class_='atl-pages')
+	if div_pages is None:
+		maxpage = 1
+	else:
+		maxpage = div_pages.find('form').find('a', class_='js-keyboard-next').find_previous_sibling('a').text
 	base_info = [soup.title.text.split('_')[0], user_info['uname'], user_info['uid']]
 	print u'输入的链接解析完毕\n===================\n输入 URL：', url
 	print u'帖子标题:', base_info[0]
 	print u'帖子作者:', base_info[1], 'UID:', base_info[2]
-	print u'当 前 页：', start_page, u'\n帖子总页数:', maxpage.text
+	print u'当 前 页：', start_page, u'\n帖子总页数:', maxpage
 
 	# 2、输入页数，求出 end_page
-	end_page = getpages(int(maxpage.text))
+	end_page = getpages(int(maxpage))
 	os.mkdir('tmp')
 
 	# 3、多线程(耗时的操作)
